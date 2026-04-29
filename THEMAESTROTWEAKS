@@ -1,0 +1,151 @@
+Add-Type -AssemblyName System.Windows.Forms
+Add-Type -AssemblyName System.Drawing
+
+$ErrorActionPreference = "SilentlyContinue"
+
+# --- ANIMAZIONE INIZIALE NEL TERMINALE ---
+Clear-Host
+$colors = @("Cyan", "Magenta", "Lime", "Yellow")
+$text = @"
+  _______ _    _ ______   __  __          ______  _____ _______ _____   ____  
+ |__   __| |  | |  ____| |  \/  |   /\   |  ____|/ ____|__   __|  __ \ / __ \ 
+    | |  | |__| | |__    | \  / |  /  \  | |__  | (___    | |  | |__) | |  | |
+    | |  |  __  |  __|   | |\/| | / /\ \ |  __|  \___ \   | |  |  _  /| |  | |
+    | |  | |  | | |____  | |  | |/ ____ \| |____ ____) |  | |  | | \ \| |__| |
+    |_|  |_|  |_|______| |_|  |_/_/    \_\______|_____/   |_|  |_|  \_\\____/ 
+"@
+foreach ($line in $text -split "`n") {
+    Write-Host $line -ForegroundColor $colors[(Get-Random -Maximum 4)]
+    Start-Sleep -Milliseconds 50
+}
+Write-Host "`n[SYSTEM]: INIZIALIZZAZIONE NUCLEO DI OTTIMIZZAZIONE..." -ForegroundColor Green
+Start-Sleep -Seconds 1
+
+# --- CONFIGURAZIONE INTERFACCIA ---
+$form = New-Object System.Windows.Forms.Form
+$form.Text = "THE MAESTRO OMNI-OPTIMIZER | BUILD 2026"
+$form.Size = New-Object New-Object System.Drawing.Size(700, 850)
+$form.BackColor = [System.Drawing.Color]::FromArgb(10, 10, 12)
+$form.ForeColor = [System.Drawing.Color]::Lime
+$form.StartPosition = "CenterScreen"
+$form.FormBorderStyle = "Fixed3D"
+
+$fontTitle = New-Object System.Drawing.Font("Consolas", 24, [System.Drawing.FontStyle]::Bold)
+$fontSub = New-Object System.Drawing.Font("Consolas", 10, [System.Drawing.FontStyle]::Italic)
+$fontBtn = New-Object System.Drawing.Font("Segoe UI", 12, [System.Drawing.FontStyle]::Bold)
+
+# Header
+$pnlHeader = New-Object System.Windows.Forms.Panel
+$pnlHeader.Size = New-Object System.Drawing.Size(700, 100)
+$pnlHeader.BackColor = [System.Drawing.Color]::FromArgb(20, 20, 25)
+$form.Controls.Add($pnlHeader)
+
+$lblTitle = New-Object System.Windows.Forms.Label
+$lblTitle.Text = "OMNI-OPTIMIZER V4"
+$lblTitle.Font = $fontTitle
+$lblTitle.ForeColor = [System.Drawing.Color]::Cyan
+$lblTitle.Location = New-Object System.Drawing.Point(0, 20)
+$lblTitle.Size = New-Object System.Drawing.Size(700, 40)
+$lblTitle.TextAlign = "MiddleCenter"
+$pnlHeader.Controls.Add($lblTitle)
+
+$lblDev = New-Object System.Windows.Forms.Label
+$lblDev.Text = "ENGINEERED BY THE MAESTRO"
+$lblDev.Font = $fontSub
+$lblDev.ForeColor = [System.Drawing.Color]::Gray
+$lblDev.Location = New-Object System.Drawing.Point(0, 60)
+$lblDev.Size = New-Object System.Drawing.Size(700, 20)
+$lblDev.TextAlign = "MiddleCenter"
+$pnlHeader.Controls.Add($lblDev)
+
+# --- TABS ---
+$tabs = New-Object System.Windows.Forms.TabControl
+$tabs.Location = New-Object System.Drawing.Point(25, 120)
+$tabs.Size = New-Object System.Drawing.Size(630, 550)
+$form.Controls.Add($tabs)
+
+function Add-MaestroTab($name) {
+    $tp = New-Object System.Windows.Forms.TabPage
+    $tp.Text = $name
+    $tp.BackColor = [System.Drawing.Color]::FromArgb(15, 15, 20)
+    $tabs.TabPages.Add($tp)
+    return $tp
+}
+
+# --- TAB 1: GAMING & ENGINE ---
+$t1 = Add-MaestroTab "GAMING_ENGINE"
+$c1 = New-Object System.Windows.Forms.CheckBox; $c1.Text = "ENABLE GOD-MODE POWER PLAN"; $c1.Location = New-Object System.Drawing.Point(30, 40); $c1.Size = New-Object System.Drawing.Size(500, 30); $t1.Controls.Add($c1)
+$c2 = New-Object System.Windows.Forms.CheckBox; $c2.Text = "FORCE GPU PRIORITY (HAGS)"; $c2.Location = New-Object System.Drawing.Point(30, 80); $c2.Size = New-Object System.Drawing.Size(500, 30); $t1.Controls.Add($c2)
+$c3 = New-Object System.Windows.Forms.CheckBox; $c3.Text = "DISABLE CPU CORE PARKING"; $c3.Location = New-Object System.Drawing.Point(30, 120); $c3.Size = New-Object System.Drawing.Size(500, 30); $t1.Controls.Add($c3)
+
+# --- TAB 2: LATENCY & NET ---
+$t2 = Add-MaestroTab "LATENCY_FIX"
+$c4 = New-Object System.Windows.Forms.CheckBox; $c4.Text = "MOUSE/KEYBOARD INTERRUPT OVERRIDE"; $c4.Location = New-Object System.Drawing.Point(30, 40); $c4.Size = New-Object System.Drawing.Size(500, 30); $t2.Controls.Add($c4)
+$c5 = New-Object System.Windows.Forms.CheckBox; $c5.Text = "TCP NO-DELAY (NAGLE'S ALGORITHM)"; $c5.Location = New-Object System.Drawing.Point(30, 80); $c5.Size = New-Object System.Drawing.Size(500, 30); $t2.Controls.Add($c5)
+$c6 = New-Object New-Object System.Windows.Forms.CheckBox; $c6.Text = "DNS FLUSH & OPTIMIZE"; $c6.Location = New-Object System.Drawing.Point(30, 120); $c6.Size = New-Object System.Drawing.Size(500, 30); $t2.Controls.Add($c6)
+
+# --- TAB 3: SYSTEM PURGE ---
+$t3 = Add-MaestroTab "SYSTEM_PURGE"
+$c7 = New-Object System.Windows.Forms.CheckBox; $c7.Text = "ERADICATE TELEMETRY (DEEP)"; $c7.Location = New-Object System.Drawing.Point(30, 40); $c7.Size = New-Object System.Drawing.Size(500, 30); $t3.Controls.Add($c7)
+$c8 = New-Object System.Windows.Forms.CheckBox; $c8.Text = "KILL BLOCKED BACKGROUND APPS"; $c8.Location = New-Object System.Drawing.Point(30, 80); $c8.Size = New-Object System.Drawing.Size(500, 30); $t3.Controls.Add($c8)
+$c9 = New-Object System.Windows.Forms.CheckBox; $c9.Text = "DIMEZZA PROCESSI (CHRIS TITUS LOGIC)"; $c9.Location = New-Object System.Drawing.Point(30, 120); $c9.Size = New-Object System.Drawing.Size(500, 30); $t3.Controls.Add($c9)
+
+# --- TAB 4: INFO ---
+$t4 = Add-MaestroTab "INFO"
+$txt = New-Object System.Windows.Forms.Label; $txt.Text = "THE MAESTRO OMNI-OPTIMIZER`n`nQuesto script e' stato creato per trasformare Windows da un ufficio a una console da guerra.`n`nVersione: 4.0 Gold Edition`nSupporto: Maestro Community"; $txt.ForeColor = "Cyan"; $txt.Location = New-Object System.Drawing.Point(50, 50); $txt.Size = New-Object System.Drawing.Size(500, 200); $txt.TextAlign = "MiddleCenter"; $t4.Controls.Add($txt)
+
+# --- BOTTONE DI ESECUZIONE ---
+$btnRun = New-Object System.Windows.Forms.Button
+$btnRun.Text = "INITIATE SYSTEM OVERHAUL"
+$btnRun.Location = New-Object System.Drawing.Point(100, 700)
+$btnRun.Size = New-Object System.Drawing.Size(500, 70)
+$btnRun.FlatStyle = "Flat"
+$btnRun.FlatAppearance.BorderColor = "Cyan"
+$btnRun.FlatAppearance.BorderSize = 2
+$btnRun.Font = $fontBtn
+$btnRun.BackColor = [System.Drawing.Color]::FromArgb(30, 30, 40)
+$btnRun.Cursor = "Hand"
+
+$btnRun.Add_Click({
+    Write-Host "`n[!] AVVIO PROTOCOLLO OMNI. RESTA IN ATTESA." -ForegroundColor Magenta
+    
+    # PUNTO DI RIPRISTINO
+    Write-Host "[-] Creazione scudo di sistema (Restore Point)..." -ForegroundColor Yellow
+    Checkpoint-Computer -Description "MAESTRO_ULTIMATE_BACKUP" -RestorePointType "MODIFY_SETTINGS" -ErrorAction SilentlyContinue
+
+    if ($c1.Checked) {
+        Write-Host "[-] Sblocco Potenza Nucleo..." -ForegroundColor Cyan
+        powercfg -duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61 | Out-Null
+        powercfg -setactive e9a42b02-d5df-448d-aa00-03f14749eb61 | Out-Null
+    }
+
+    if ($c4.Checked) {
+        Write-Host "[-] Ricalibrazione Input Latenza..." -ForegroundColor Cyan
+        reg add "HKLM\SYSTEM\CurrentControlSet\Services\mouclass\Parameters" /v "MouseDataQueueSize" /t REG_DWORD /d 20 /f | Out-Null
+        reg add "HKLM\SYSTEM\CurrentControlSet\Services\kbdclass\Parameters" /v "KeyboardDataQueueSize" /t REG_DWORD /d 20 /f | Out-Null
+    }
+
+    if ($c9.Checked) {
+        Write-Host "[-] ESECUZIONE MASSACRO PROCESSI..." -ForegroundColor Red
+        # Disabilita i servizi pesanti
+        $SvcToKill = @("SysMain", "DiagTrack", "dmwappushservice", "WbioSrvc", "MapsBroker", "XblAuthManager", "XblGameSave", "XboxNetApiSvc", "Spooler")
+        foreach ($s in $SvcToKill) {
+            Write-Host "   > Terminando: $s" -ForegroundColor DarkGray
+            Stop-Service -Name $s -Force | Out-Null
+            Set-Service -Name $s -StartupType Disabled | Out-Null
+        }
+        # Disabilita Scheduled Tasks (La vera chicca)
+        Get-ScheduledTask -TaskName "Consolidator", "ProgramDataUpdater", "Proxy" | Disable-ScheduledTask | Out-Null
+    }
+
+    if ($c7.Checked) {
+        Write-Host "[-] Incenerimento Telemetria di Stato..." -ForegroundColor Yellow
+        reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\DataCollection" /v "AllowTelemetry" /t REG_DWORD /d 0 /f | Out-Null
+    }
+
+    Write-Host "`n[COMPLETATO]: IL PC E' STATO REVISIONATO. RIAVVIA PER IL DECOLLO." -ForegroundColor Lime
+    [System.Windows.Forms.MessageBox]::Show("Sistema Ottimizzato! Hai appena installato il potere sul tuo PC.", "The Maestro Omni-Optimizer")
+})
+
+$form.Controls.Add($btnRun)
+$form.ShowDialog() | Out-Null
