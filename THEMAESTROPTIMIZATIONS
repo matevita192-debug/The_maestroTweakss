@@ -1,74 +1,89 @@
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
-# --- MESSAGGIO INIZIALE NEL TERMINALE ---
-Write-Host "##############################################" -ForegroundColor Cyan
-Write-Host "#    THE MAESTRO IS OPTIMIZING YOUR LIFE     #" -ForegroundColor Magenta
-Write-Host "##############################################" -ForegroundColor Cyan
-Write-Host "In attesa che l'umano faccia le sue scelte..." -ForegroundColor Yellow
+# --- SETUP TERMINALE BIZZARRO ---
+$ErrorActionPreference = "SilentlyContinue"
+Clear-Host
+Write-Host "############################################################" -ForegroundColor Cyan
+Write-Host "#              THE MAESTRO - GOD MODE OPTIMIZER            #" -ForegroundColor Magenta
+Write-Host "#      Sintonizzando il tuo PC sulla frequenza della Gloria      #" -ForegroundColor Cyan
+Write-Host "############################################################" -ForegroundColor Yellow
 
 $form = New-Object System.Windows.Forms.Form
-$form.Text = "MAESTRO'S CHAOS OPTIMIZER"
-$form.Size = New-Object System.Drawing.Size(420,550)
-$form.BackColor = [System.Drawing.Color]::FromArgb(15, 15, 15)
+$form.Text = "THE MAESTRO - GOD MODE V1.0"
+$form.Size = New-Object System.Drawing.Size(500,650)
+$form.BackColor = [System.Drawing.Color]::FromArgb(10, 10, 15)
 $form.StartPosition = "CenterScreen"
 
-# Titolo Bizzarro
+# Titolo Titano
 $label = New-Object System.Windows.Forms.Label
-$label.Text = "MAESTRO'S MAGIC"
-$label.Font = New-Object System.Drawing.Font("Impact", 26)
-$label.ForeColor = [System.Drawing.Color]::Lime
-$label.Size = New-Object System.Drawing.Size(350, 50)
-$label.Location = New-Object System.Drawing.Point(35, 20)
-$label.TextAlign = "MiddleCenter"
-$form.Controls.Add($label)
+$label.Text = "MAESTRO OPTIMIZER"; $label.Font = New-Object System.Drawing.Font("Impact", 32); $label.ForeColor = [System.Drawing.Color]::Cyan
+$label.Size = New-Object System.Drawing.Size(450, 60); $label.Location = New-Object System.Drawing.Point(25, 20); $label.TextAlign = "MiddleCenter"; $form.Controls.Add($label)
 
-# Checkboxes
-$chkFPS = New-Object System.Windows.Forms.CheckBox
-$chkFPS.Text = "Inject Ultra-FPS Serum"; $chkFPS.ForeColor = "White"; $chkFPS.Location = New-Object System.Drawing.Point(50, 120); $chkFPS.Size = New-Object System.Drawing.Size(300, 30); $form.Controls.Add($chkFPS)
+# Checklist
+$fontC = New-Object System.Drawing.Font("Segoe UI", 11, [System.Drawing.FontStyle]::Bold)
+$opt1 = New-Object System.Windows.Forms.CheckBox; $opt1.Text = "GOD FPS (Power Plan + Throttling)"; $opt1.ForeColor = "White"; $opt1.Font = $fontC; $opt1.Location = New-Object System.Drawing.Point(50, 120); $opt1.Size = New-Object System.Drawing.Size(400, 30); $form.Controls.Add($opt1)
+$opt2 = New-Object System.Windows.Forms.CheckBox; $opt2.Text = "ZERO DELAY (Mouse, Keyboard, Network)"; $opt2.ForeColor = "White"; $opt2.Font = $fontC; $opt2.Location = New-Object System.Drawing.Point(50, 170); $opt2.Size = New-Object System.Drawing.Size(400, 30); $form.Controls.Add($opt2)
+$opt3 = New-Object System.Windows.Forms.CheckBox; $opt3.Text = "PROCESS KILLER (Dimezza Servizi Spazzatura)"; $opt3.ForeColor = "Yellow"; $opt3.Font = $fontC; $opt3.Location = New-Object System.Drawing.Point(50, 220); $opt3.Size = New-Object System.Drawing.Size(400, 30); $form.Controls.Add($opt3)
+$opt4 = New-Object System.Windows.Forms.CheckBox; $opt4.Text = "DEEP CLEAN (Cache, Temp, Prefetch)"; $opt4.ForeColor = "White"; $opt4.Font = $fontC; $opt4.Location = New-Object System.Drawing.Point(50, 270); $opt4.Size = New-Object System.Drawing.Size(400, 30); $form.Controls.Add($opt4)
 
-$chkLag = New-Object System.Windows.Forms.CheckBox
-$chkLag.Text = "Exorcise Input Lag"; $chkLag.ForeColor = "White"; $chkLag.Location = New-Object System.Drawing.Point(50, 170); $chkLag.Size = New-Object System.Drawing.Size(300, 30); $form.Controls.Add($chkLag)
+# Tasto di Esecuzione
+$btn = New-Object System.Windows.Forms.Button; $btn.Text = "INVOCA IL POTERE"; $btn.BackColor = [System.Drawing.Color]::Cyan; $btn.Location = New-Object System.Drawing.Point(125, 450); $btn.Size = New-Object System.Drawing.Size(250, 70); $btn.Font = New-Object System.Drawing.Font("Segoe UI", 14, [System.Drawing.FontStyle]::Bold)
 
-$chkClean = New-Object System.Windows.Forms.CheckBox
-$chkClean.Text = "Burn Trash Files"; $chkClean.ForeColor = "White"; $chkClean.Location = New-Object System.Drawing.Point(50, 220); $chkClean.Size = New-Object System.Drawing.Size(300, 30); $form.Controls.Add($chkClean)
+$btn.Add_Click({
+    Write-Host "`n[!] RITUALE INIZIATO. NON TOCCARE NULLA." -ForegroundColor Magenta
+    Write-Host "Mettiti comodo... ritorno tra poco che saranno pronte le modifiche!" -ForegroundColor Yellow
 
-# Tasto Apply
-$btnApply = New-Object System.Windows.Forms.Button
-$btnApply.Text = "DO THE MAGIC"; $btnApply.BackColor = [System.Drawing.Color]::Lime; $btnApply.Location = New-Object System.Drawing.Point(110, 350); $btnApply.Size = New-Object System.Drawing.Size(200, 60); $btnApply.Font = New-Object System.Drawing.Font("Segoe UI", 12, [System.Drawing.FontStyle]::Bold)
-
-$btnApply.Add_Click({
-    Write-Host "`n[!] AVVIO RITUALE DI OTTIMIZZAZIONE..." -ForegroundColor Magenta
-    
-    if ($chkFPS.Checked) {
-        Write-Host "[-] Sintonizzando i neutroni per il Boost FPS..." -ForegroundColor Cyan
-        powercfg -duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61
-        powercfg -setactive e9a42b02-d5df-448d-aa00-03f14749eb61
-        Write-Host "[+] Piano energetico iniettato con successo." -ForegroundColor Green
+    # --- 1. GOD FPS ---
+    if ($opt1.Checked) {
+        Write-Host "[-] Iniezione Piano Energetico e rimozione Throttling..." -ForegroundColor Cyan
+        powercfg -duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61 | Out-Null
+        powercfg -setactive e9a42b02-d5df-448d-aa00-03f14749eb61 | Out-Null
+        # Disable Power Throttling
+        reg add "HKLM\System\CurrentControlSet\Control\Power\PowerThrottling" /v "PowerThrottlingOff" /t REG_DWORD /d 1 /f | Out-Null
+        Write-Host "[+] CPU Sbloccata al 100%." -ForegroundColor Green
     }
-    
-    if ($chkLag.Checked) {
-        Write-Host "[-] Cacciando i lag-monsters dal mouse e dalla tastiera..." -ForegroundColor Cyan
-        # Tweaks Registro
-        Set-ItemProperty -Path "HKCU:\Control Panel\Mouse" -Name "MouseSpeed" -Value 0
+
+    # --- 2. ZERO DELAY ---
+    if ($opt2.Checked) {
+        Write-Host "[-] Distruzione Latenza (Mouse, Tastiera, Rete)..." -ForegroundColor Cyan
         Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\mouclass\Parameters" -Name "MouseDataQueueSize" -Value 20
         Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\kbdclass\Parameters" -Name "KeyboardDataQueueSize" -Value 20
-        Write-Host "[+] Latenza polverizzata." -ForegroundColor Green
-    }
-    
-    if ($chkClean.Checked) {
-        Write-Host "[-] Incenerimento file inutili in corso... Ritorna tra poco!" -ForegroundColor Cyan
-        $files = Get-ChildItem "$env:TEMP\*" -Recurse
-        foreach ($file in $files) {
-            Write-Host "Cestinando: $($file.Name)" -ForegroundColor DarkGray
-            Remove-Item $file.FullName -Force -ErrorAction SilentlyContinue
-        }
-        Write-Host "[+] Spazzatura eliminata." -ForegroundColor Green
+        # Network Throttling Fix
+        reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile" /v "NetworkThrottlingIndex" /t REG_DWORD /d 0xffffffff /f | Out-Null
+        Write-Host "[+] Lag sterminato." -ForegroundColor Green
     }
 
-    Write-Host "`n[***] SCRIPT FINITO. IL TUO PC ORA VOLA. [***]" -ForegroundColor Gold
-    [System.Windows.Forms.MessageBox]::Show("Le modifiche sono pronte, babbano! Riavvia il PC e goditi la fluidità.", "The Maestro dice...")
+    # --- 3. PROCESS KILLER (CHRIS TITUS STYLE) ---
+    if ($opt3.Checked) {
+        Write-Host "[-] MASSACRO PROCESSI INUTILI..." -ForegroundColor Red
+        $trash = @("DiagTrack", "dmwappushservice", "SysMain", "XblAuthManager", "XblGameSave", "XboxNetApiSvc", "WbioSrvc", "MapsBroker", "RemoteRegistry")
+        foreach ($s in $trash) {
+            Write-Host "Eliminando il parassita: $s" -ForegroundColor DarkGray
+            Stop-Service -Name $s -Force -ErrorAction SilentlyContinue
+            Set-Service -Name $s -StartupType Disabled -ErrorAction SilentlyContinue
+        }
+        # Disabilita Telemetria nel Registro
+        reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\DataCollection" /v "AllowTelemetry" /t REG_DWORD /d 0 /f | Out-Null
+        Write-Host "[+] Windows ora è leggero come una piuma." -ForegroundColor Green
+    }
+
+    # --- 4. DEEP CLEAN ---
+    if ($opt4.Checked) {
+        Write-Host "[-] PULIZIA PROFONDA (Sperando non ci siano i tuoi segreti qui)..." -ForegroundColor Cyan
+        $paths = @("$env:TEMP\*", "C:\Windows\Temp\*", "C:\Windows\Prefetch\*")
+        foreach ($p in $paths) {
+            Get-ChildItem $p -Recurse | ForEach-Object {
+                Write-Host "Bruciando: $($_.Name)" -ForegroundColor DarkGray
+                Remove-Item $_.FullName -Force -Recurse -ErrorAction SilentlyContinue
+            }
+        }
+        Write-Host "[+] Sistema sterilizzato." -ForegroundColor Green
+    }
+
+    Write-Host "`n[***] SCRIPT FINITO. SEI UN DIO ORA. [***]" -ForegroundColor Gold
+    [System.Windows.Forms.MessageBox]::Show("PC Purificato con successo! Riavvia per sentire la vera potenza.", "The Maestro God Mode")
 })
 
-$form.Controls.Add($btnApply)
+$form.Controls.Add($btn)
 $form.ShowDialog()
