@@ -1,74 +1,58 @@
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
-
 $ErrorActionPreference = "SilentlyContinue"
 Clear-Host
 
-Write-Host "############################################################" -ForegroundColor Red
-Write-Host "#              THE MAESTRO - BRUTAL PROCESS KILLER         #" -ForegroundColor Yellow
-Write-Host "#       Preparati... sto per fare il vuoto nel tuo PC      #" -ForegroundColor Red
-Write-Host "############################################################" -ForegroundColor White
-
+# --- UI SETTINGS ---
 $form = New-Object System.Windows.Forms.Form
-$form.Text = "MAESTRO BRUTAL OPTIMIZER"
+$form.Text = "MAESTRO NUCLEAR OPTIMIZER"
 $form.Size = New-Object System.Drawing.Size(450,550)
 $form.BackColor = [System.Drawing.Color]::FromArgb(5, 5, 5)
 $form.StartPosition = "CenterScreen"
 
-# Titolo Aggressivo
 $label = New-Object System.Windows.Forms.Label
-$label.Text = "PROCESS KILLER"; $label.Font = New-Object System.Drawing.Font("Impact", 35); $label.ForeColor = [System.Drawing.Color]::Red
+$label.Text = "NUCLEAR MODE"; $label.Font = New-Object System.Drawing.Font("Impact", 35); $label.ForeColor = [System.Drawing.Color]::Red
 $label.Size = New-Object System.Drawing.Size(400, 60); $label.Location = New-Object System.Drawing.Point(25, 20); $label.TextAlign = "MiddleCenter"; $form.Controls.Add($label)
 
-# Checklist
-$fontC = New-Object System.Drawing.Font("Segoe UI", 12, [System.Drawing.FontStyle]::Bold)
-$optMaster = New-Object System.Windows.Forms.CheckBox; $optMaster.Text = "DIMEZZA PROCESSI (Brutal Mode)"; $optMaster.ForeColor = "Yellow"; $optMaster.Font = $fontC; $optMaster.Location = New-Object System.Drawing.Point(50, 150); $optMaster.Size = New-Object System.Drawing.Size(350, 30); $form.Controls.Add($optMaster)
-$optLag = New-Object System.Windows.Forms.CheckBox; $optLag.Text = "ZERO DELAY (Mouse/Keyboard)"; $optLag.ForeColor = "White"; $optLag.Font = $fontC; $optLag.Location = New-Object System.Drawing.Point(50, 200); $optLag.Size = New-Object System.Drawing.Size(350, 30); $form.Controls.Add($optLag)
+$chkNuclear = New-Object System.Windows.Forms.CheckBox; $chkNuclear.Text = "ERADICA PROCESSI (Nuclear)"; $chkNuclear.ForeColor = "Yellow"; $chkNuclear.Font = New-Object System.Drawing.Font("Segoe UI", 12, [System.Drawing.FontStyle]::Bold); $chkNuclear.Location = New-Object System.Drawing.Point(50, 150); $chkNuclear.Size = New-Object System.Drawing.Size(350, 30); $form.Controls.Add($chkNuclear)
 
-# Tasto di Esecuzione
-$btn = New-Object System.Windows.Forms.Button; $btn.Text = "KILL THEM ALL"; $btn.BackColor = [System.Drawing.Color]::Red; $btn.ForeColor = "White"; $btn.Location = New-Object System.Drawing.Point(125, 380); $btn.Size = New-Object System.Drawing.Size(200, 70); $btn.Font = New-Object System.Drawing.Font("Segoe UI", 14, [System.Drawing.FontStyle]::Bold); $btn.FlatStyle = "Flat"
+$btn = New-Object System.Windows.Forms.Button; $btn.Text = "LAUNCH ATTACK"; $btn.BackColor = [System.Drawing.Color]::Red; $btn.ForeColor = "White"; $btn.Location = New-Object System.Drawing.Point(125, 380); $btn.Size = New-Object System.Drawing.Size(200, 70); $btn.Font = New-Object System.Drawing.Font("Segoe UI", 14, [System.Drawing.FontStyle]::Bold); $btn.FlatStyle = "Flat"
 
 $btn.Add_Click({
-    Write-Host "`n[!] ATTACCO AI PROCESSI INIZIATO. GUARDA IL TASK MANAGER..." -ForegroundColor Red
-    Write-Host "Mettiti comodo... ritorno tra poco che saranno pronte le modifiche!" -ForegroundColor Cyan
+    Write-Host "`n[!] NUCLEAR ATTACK INIZIATO. NESSUN PRIGIONIERO." -ForegroundColor Red
+    Write-Host "Ritorna tra poco che saranno pronte le modifiche..." -ForegroundColor Cyan
 
-    if ($optMaster.Checked) {
-        Write-Host "[-] Disabilitando compiti pianificati (Tasks)..." -ForegroundColor Yellow
-        # Questo è il segreto di Chris Titus: disattivare quello che riaccende i processi
-        $tasks = @(
-            "Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser",
-            "Microsoft\Windows\Application Experience\ProgramDataUpdater",
-            "Microsoft\Windows\Autochk\Proxy",
-            "Microsoft\Windows\Customer Experience Improvement Program\Consolidator"
-        )
-        foreach ($t in $tasks) {
-            Write-Host "Disattivando Task: $t" -ForegroundColor DarkGray
-            Disable-ScheduledTask -TaskName (Split-Path $t -Leaf) -TaskPath (Split-Path $t -Parent) | Out-Null
+    if ($chkNuclear.Checked) {
+        # 1. KILL APPS IN BACKGROUND (Il killer dei processi)
+        Write-Host "[-] Bloccando le App di Windows in Background..." -ForegroundColor Yellow
+        $RegistryPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications"
+        if (-not (Test-Path $RegistryPath)) { New-Item $RegistryPath -Force | Out-Null }
+        Set-ItemProperty -Path $RegistryPath -Name "GlobalUserDisabled" -Value 1 -Type DWord
+
+        # 2. DISABILITA STARTUP PESANTI (Edge, OneDrive, Cortana)
+        Write-Host "[-] Rimozione programmi all'avvio..." -ForegroundColor Red
+        $runKeys = @("OneDrive", "MicrosoftEdgeAutoLaunch", "Cortana", "Teams")
+        foreach ($key in $runKeys) {
+            Remove-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Run" -Name $key -ErrorAction SilentlyContinue
         }
 
-        Write-Host "[-] Terminando servizi parassiti..." -ForegroundColor Red
-        $services = @("SysMain", "DiagTrack", "dmwappushservice", "WbioSrvc", "MapsBroker", "XblAuthManager", "XblGameSave", "XboxNetApiSvc")
+        # 3. DISABILITA SERVIZI DI TRACCIAMENTO PROFONDO
+        Write-Host "[-] Uccidendo servizi di Telemetria..." -ForegroundColor Yellow
+        $services = @("DiagTrack", "dmwappushservice", "SysMain", "WbioSrvc", "MapsBroker", "XblAuthManager", "XblGameSave", "XboxNetApiSvc", "Spooler") # Spooler è la stampante: se non stampi, uccidilo!
         foreach ($s in $services) {
-            Write-Host "Uccidendo: $s" -ForegroundColor DarkGray
-            Stop-Service -Name $s -Force | Out-Null
-            Set-Service -Name $s -StartupType Disabled | Out-Null
+            Stop-Service -Name $s -Force 
+            Set-Service -Name $s -StartupType Disabled
         }
 
-        # Riduce la priorità dei processi non-core (Meno carico CPU)
-        Write-Host "[-] Ottimizzando RAM e CPU..." -ForegroundColor Cyan
-        reg add "HKLM\System\CurrentControlSet\Control\PriorityControl" /v "Win32PrioritySeparation" /t REG_DWORD /d 38 /f | Out-Null
-        Write-Host "[+] Processi inutili sterminati." -ForegroundColor Green
+        # 4. PULIZIA SCHEDULER (Quello che riapre i processi)
+        Write-Host "[-] Distruggendo i Timer di Windows..." -ForegroundColor Red
+        Get-ScheduledTask -TaskName "Consolidator", "ProgramDataUpdater", "Proxy", "Microsoft Compatibility Appraiser" | Disable-ScheduledTask
+
+        Write-Host "[+] Tabula Rasa completata." -ForegroundColor Green
     }
 
-    if ($optLag.Checked) {
-        Write-Host "[-] Polverizzando Input Delay..." -ForegroundColor Cyan
-        Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\mouclass\Parameters" -Name "MouseDataQueueSize" -Value 20
-        Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\kbdclass\Parameters" -Name "KeyboardDataQueueSize" -Value 20
-        Write-Host "[+] Lag rimosso." -ForegroundColor Green
-    }
-
-    Write-Host "`n[***] OPERAZIONE FINITA. RIAVVIA ORA PER VEDERE LA DIFFERENZA. [***]" -ForegroundColor Gold
-    [System.Windows.Forms.MessageBox]::Show("Il massacro è finito! Riavvia il PC e controlla il Task Manager: vedrai molti meno processi attivi.", "The Maestro")
+    Write-Host "`n[***] SCRIPT FINITO. RIAVVIA ORA. [***]" -ForegroundColor Gold
+    [System.Windows.Forms.MessageBox]::Show("Attacco completato. Se dopo il riavvio hai ancora 104 processi, significa che hai troppe app tue (Discord, Steam, ecc.) che partono all'avvio. Chiudile manualmente!", "The Maestro Nuclear")
 })
 
 $form.Controls.Add($btn)
