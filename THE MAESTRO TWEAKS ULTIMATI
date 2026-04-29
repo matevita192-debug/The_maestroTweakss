@@ -1,0 +1,232 @@
+<# 
+======================================================================
+      THE MAESTRO OMNI OPTIMIZER [ULTIMATE EDITION V4.0]
+======================================================================
+     A CYBERPUNK OPTIMIZATION CORE ENGINEERED FOR PURE GLORY.
+     USE AT YOUR OWN RISK. THE MAESTRO TAKES NO LIABILITY.
+======================================================================
+#>
+
+# --- Configurazione Terminale Hacker ---
+$ErrorActionPreference = "SilentlyContinue"
+Clear-Host
+$host.UI.RawUI.WindowTitle = ">> THE MAESTRO OMNI OPTIMIZER <<"
+
+# --- Animazione ASCII d'Avvio ---
+$colors = @("Lime", "Cyan", "Lime")
+$asciiLogo = @"
+  _______ _    _ ______   __  __          ______  _____ _______ _____   ____  
+ |__   __| |  | |  ____| |  \/  |   /\   |  ____|/ ____|__   __|  __ \ / __ \ 
+    | |  | |__| | |__    | \  / |  /  \  | |__  | (___    | |  | |__) | |  | |
+    | |  |  __  |  __|   | |\/| | / /\ \ |  __|  \___ \   | |  |  _  /| |  | |
+    | |  | |  | | |____  | |  | |/ ____ \| |____ ____) |  | |  | | \ \| |__| |
+    |_|  |_|  |_|______| |_|  |_/_/    \_\______|_____/   |_|  |_|  \_\\____/ 
+                                                                               
+"@
+foreach ($line in $asciiLogo -split "`n") {
+    Write-Host $line -ForegroundColor $colors[(Get-Random -Maximum 3)]
+    Start-Sleep -Milliseconds 30
+}
+Write-Host ">> PROTOCOLLO CYBER_OPTIMIZATION CARICATO." -ForegroundColor Green
+Write-Host ">> IN ATTESA DI AUTORIZZAZIONE UMANA..." -ForegroundColor Yellow
+Start-Sleep -Seconds 1
+
+Add-Type -AssemblyName System.Windows.Forms
+Add-Type -AssemblyName System.Drawing
+
+# --- SETUP FINESTRA PRINCIPALE CYBERPUNK ---
+$form = New-Object System.Windows.Forms.Form
+$form.Text = "THE MAESTRO OMNI OPTIMIZER | BUILD 2026.04"
+$form.Size = New-Object System.Drawing.Size(850, 750)
+$form.BackColor = [System.Drawing.Color]::FromArgb(5, 5, 5) # Nero quasi assoluto
+$form.ForeColor = [System.Drawing.Color]::Lime # Verde hacker neon
+$form.StartPosition = "CenterScreen"
+$form.FormBorderStyle = "FixedSingle" # Non ridimensionabile per evitare vuoti
+
+# Font coordinati
+$fontTitle = New-Object System.Drawing.Font("Impact", 30, [System.Drawing.FontStyle]::Bold)
+$fontTabs = New-Object System.Drawing.Font("Consolas", 12, [System.Drawing.FontStyle]::Bold)
+$fontCheck = New-Object System.Drawing.Font("Consolas", 10)
+$fontBtn = New-Object System.Drawing.Font("Segoe UI", 16, [System.Drawing.FontStyle]::Bold)
+
+# --- HEADER (Titolo Cyber) ---
+$lblTitle = New-Object System.Windows.Forms.Label
+$lblTitle.Text = "OMNI OPTIMIZER ULTIMATE"
+$lblTitle.Font = $fontTitle
+$lblTitle.ForeColor = [System.Drawing.Color]::Cyan
+$lblTitle.Location = New-Object System.Drawing.Point(0, 20)
+$lblTitle.Size = New-Object System.Drawing.Size(850, 60)
+$lblTitle.TextAlign = "MiddleCenter"
+$form.Controls.Add($lblTitle)
+
+$lblDev = New-Object System.Windows.Forms.Label
+$lblDev.Text = "DESIGNED BY THE MAESTRO CORE ENGINE"
+$lblDev.Font = New-Object System.Drawing.Font("Consolas", 9, [System.Drawing.FontStyle]::Italic)
+$lblDev.ForeColor = [System.Drawing.Color]::Gray
+$lblDev.Location = New-Object System.Drawing.Point(0, 80)
+$lblDev.Size = New-Object System.Drawing.Size(850, 20)
+$lblDev.TextAlign = "MiddleCenter"
+$form.Controls.Add($lblDev)
+
+# --- CONTROLLO SCHEDE LATERALE (Side Tabs) ---
+$tabControl = New-Object System.Windows.Forms.TabControl
+$tabControl.Location = New-Object System.Drawing.Point(180, 120)
+$tabControl.Size = New-Object System.Drawing.Size(630, 480)
+$tabControl.Font = $fontCheck
+$tabControl.Appearance = "Normal"
+$form.Controls.Add($tabControl)
+
+# Panel laterale per le schede (Menù a sinistra)
+$pnlTabs = New-Object System.Windows.Forms.Panel
+$pnlTabs.Location = New-Object System.Drawing.Point(20, 120)
+$pnlTabs.Size = New-Object System.Drawing.Size(150, 480)
+$pnlTabs.BackColor = [System.Drawing.Color]::FromArgb(15, 15, 15)
+$form.Controls.Add($pnlTabs)
+
+$lblTabHead = New-Object System.Windows.Forms.Label
+$lblTabHead.Text = "[ MENU ]"
+$lblTabHead.Font = $fontTabs
+$lblTabHead.ForeColor = [System.Drawing.Color]::Yellow
+$lblTabHead.Location = New-Object System.Drawing.Point(0, 10)
+$lblTabHead.Size = New-Object System.Drawing.Size(150, 30)
+$lblTabHead.TextAlign = "MiddleCenter"
+$pnlTabs.Controls.Add($lblTabHead)
+
+# Funzione per creare pulsanti di menu laterale
+function Add-MenuButton($title, $index, $tp) {
+    $btn = New-Object System.Windows.Forms.Button
+    $btn.Text = $title
+    $btn.Location = New-Object System.Drawing.Point(10, (50 + ($index * 60)))
+    $btn.Size = New-Object System.Drawing.Size(130, 50)
+    $btn.FlatStyle = "Flat"
+    $btn.FlatAppearance.BorderSize = 0
+    $btn.Font = $fontTabs
+    $btn.ForeColor = "White"
+    $btn.Cursor = "Hand"
+    $btn.Add_Click({ $tabControl.SelectedTab = $tp })
+    $pnlTabs.Controls.Add($btn)
+    return $btn
+}
+
+# --- CREAZIONE SCHEDE (Tabs) ---
+function Add-CyberTab($title) {
+    $tp = New-Object System.Windows.Forms.TabPage
+    $tp.Text = $title
+    $tp.BackColor = [System.Drawing.Color]::FromArgb(10, 10, 10)
+    $tabControl.TabPages.Add($tp)
+    return $tp
+}
+
+# 1. Performance Tab
+$tab1 = Add-CyberTab "GAMING & CPU"
+Add-MenuButton "1. PERFORMANCE" 0 $tab1 | Out-Null
+$groupPerf = New-Object System.Windows.Forms.GroupBox; $groupPerf.Text = " CORE ENGINE OPTIMIZATION "; $groupPerf.ForeColor = "Cyan"; $groupPerf.Location = New-Object System.Drawing.Point(20, 20); $groupPerf.Size = New-Object System.Drawing.Size(580, 200); $tab1.Controls.Add($groupPerf)
+$c_ultimate = New-Object System.Windows.Forms.CheckBox; $c_ultimate.Text = "ENABLE GOD-MODE POWER PLAN (Ultimate Perf)"; $c_ultimate.Location = New-Object System.Drawing.Point(20, 40); $c_ultimate.Size = New-Object System.Drawing.Size(530, 30); $groupPerf.Controls.Add($c_ultimate)
+$c_hag = New-Object System.Windows.Forms.CheckBox; $c_hag.Text = "FORCE GPU PRIORITY (HAGS + Priority)"; $c_hag.Location = New-Object System.Drawing.Point(20, 80); $c_hag.Size = New-Object System.Drawing.Size(530, 30); $groupPerf.Controls.Add($c_hag)
+$c_park = New-Object System.Windows.Forms.CheckBox; $c_park.Text = "DISABLE CPU CORE PARKING (Maximum Speed)"; $c_park.Location = New-Object System.Drawing.Point(20, 120); $c_park.Size = New-Object System.Drawing.Size(530, 30); $groupPerf.Controls.Add($c_park)
+
+# 2. Latency Tab
+$tab2 = Add-CyberTab "LATENCY & NET"
+Add-MenuButton "2. LATENCY" 1 $tab2 | Out-Null
+$groupLag = New-Object System.Windows.Forms.GroupBox; $groupLag.Text = " LATENCY STRIKE "; $groupLag.ForeColor = "Cyan"; $groupLag.Location = New-Object System.Drawing.Point(20, 20); $groupLag.Size = New-Object System.Drawing.Size(580, 200); $tab2.Controls.Add($groupLag)
+$c_lag = New-Object System.Windows.Forms.CheckBox; $c_lag.Text = "MOUSE/KEYBOARD INTERRUPT OVERRIDE (Zero Delay)"; $c_lag.Location = New-Object System.Drawing.Point(20, 40); $c_lag.Size = New-Object System.Drawing.Size(530, 30); $groupLag.Controls.Add($c_lag)
+$c_tcp = New-Object System.Windows.Forms.CheckBox; $c_tcp.Text = "ENABLE TCP NO-DELAY (Lower Network Ping)"; $c_tcp.Location = New-Object System.Drawing.Point(20, 80); $c_tcp.Size = New-Object System.Drawing.Size(530, 30); $groupLag.Controls.Add($c_tcp)
+$c_dns = New-Object System.Windows.Forms.CheckBox; $c_dns.Text = "DNS FLUSH & OPTIMIZE (Faster Loading)"; $c_dns.Location = New-Object System.Drawing.Point(20, 120); $c_dns.Size = New-Object System.Drawing.Size(530, 30); $groupLag.Controls.Add($c_dns)
+
+# 3. System Purge Tab
+$tab3 = Add-CyberTab "SYSTEM PURGE"
+Add-MenuButton "3. PROCESSI" 2 $tab3 | Out-Null
+$groupPurge = New-Object System.Windows.Forms.GroupBox; $groupPurge.Text = " NUCLEAR OPTION "; $groupPurge.ForeColor = "Red"; $groupPurge.Location = New-Object System.Drawing.Point(20, 20); $groupPurge.Size = New-Object System.Drawing.Size(580, 200); $tab3.Controls.Add($groupPurge)
+$c_tele = New-Object System.Windows.Forms.CheckBox; $c_tele.Text = "ERADICATE TELEMETRY (DEEP PURGE)"; $c_tele.Location = New-Object System.Drawing.Point(20, 40); $c_tele.Size = New-Object System.Drawing.Size(530, 30); $groupPurge.Controls.Add($c_tele)
+$c_ct = New-Object System.Windows.Forms.CheckBox; $c_ct.Text = "PROCESS KILLER (DIMEZZA SERVIZI CHRIS TITUS STYLE)"; $c_ct.Location = New-Object System.Drawing.Point(20, 80); $c_ct.Size = New-Object System.Drawing.Size(530, 30); $groupPurge.Controls.Add($c_ct)
+$c_deep = New-Object System.Windows.Forms.CheckBox; $c_deep.Text = "DISABLE SCHEDULED MAINTENANCE TASKS"; $c_deep.Location = New-Object System.Drawing.Point(20, 120); $c_deep.Size = New-Object System.Drawing.Size(530, 30); $groupPurge.Controls.Add($c_deep)
+
+# 4. Deep Clean Tab
+$tab4 = Add-CyberTab "DEEP CLEAN"
+Add-MenuButton "4. CLEANER" 3 $tab4 | Out-Null
+$groupClean = New-Object System.Windows.Forms.GroupBox; $groupClean.Text = " SYSTEM STERILIZATION "; $groupClean.ForeColor = "Yellow"; $groupClean.Location = New-Object System.Drawing.Point(20, 20); $groupClean.Size = New-Object System.Drawing.Size(580, 200); $tab4.Controls.Add($groupClean)
+$c_temp = New-Object System.Windows.Forms.CheckBox; $c_temp.Text = "BURN TEMPORARY FILES (Temp, Prefetch)"; $c_temp.Location = New-Object System.Drawing.Point(20, 40); $c_temp.Size = New-Object System.Drawing.Size(530, 30); $groupClean.Controls.Add($c_temp)
+$c_log = New-Object System.Windows.Forms.CheckBox; $c_log.Text = "PURGE SYSTEM LOGS AND REPORTS"; $c_log.Location = New-Object System.Drawing.Point(20, 80); $c_log.Size = New-Object System.Drawing.Size(530, 30); $groupClean.Controls.Add($c_log)
+
+# --- BOTTONE DI ESECUZIONE (The Tasto Divino) ---
+$btnRun = New-Object System.Windows.Forms.Button
+$btnRun.Text = "INITIATE SYSTEM OVERHAUL"
+$btnRun.Location = New-Object System.Drawing.Point(225, 620)
+$btnRun.Size = New-Object System.Drawing.Size(400, 70)
+$btnRun.FlatStyle = "Flat"
+$btnRun.FlatAppearance.BorderColor = "Cyan"
+$btnRun.FlatAppearance.BorderSize = 2
+$btnRun.Font = $fontBtn
+$btnRun.BackColor = [System.Drawing.Color]::FromArgb(25, 25, 30)
+$btnRun.Cursor = "Hand"
+
+# --- AZIONE TASTO APPLY ---
+$btnRun.Add_Click({
+    Write-Host "`n[!] PROTOCOLLO OMNI_OVERHAUL ATTIVATO. GUARDA IL LOG." -ForegroundColor Magenta
+    Start-Sleep -Seconds 1
+    
+    # PULIZIA FINALE ERRORI
+    $ErrorActionPreference = "SilentlyContinue"
+
+    # PUNTO DI RIPRISTINO
+    Write-Host "[-] Creazione Scudo di Sistema (Restore Point)..." -ForegroundColor Yellow
+    Checkpoint-Computer -Description "MAESTRO_OMNI_BACKUP" -RestorePointType "MODIFY_SETTINGS" -ErrorAction SilentlyContinue
+
+    # 1. PERFORMANCE OVERRIDE
+    if ($c_ultimate.Checked) {
+        Write-Host ">> Iniezione Energia... [Bypass Throttling]" -ForegroundColor Cyan
+        powercfg -duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61 | Out-Null
+        powercfg -setactive e9a42b02-d5df-448d-aa00-03f14749eb61 | Out-Null
+        # Disable Power Throttling
+        reg add "HKLM\System\CurrentControlSet\Control\Power\PowerThrottling" /v "PowerThrottlingOff" /t REG_DWORD /d 1 /f | Out-Null
+    }
+    
+    if ($c_lag.Checked) {
+        Write-Host ">> Distruzione Latenza..." -ForegroundColor Cyan
+        reg add "HKLM\SYSTEM\CurrentControlSet\Services\mouclass\Parameters" /v "MouseDataQueueSize" /t REG_DWORD /d 20 /f | Out-Null
+        reg add "HKLM\SYSTEM\CurrentControlSet\Services\kbdclass\Parameters" /v "KeyboardDataQueueSize" /t REG_DWORD /d 20 /f | Out-Null
+    }
+
+    # 2. PROCESS KILLER (NUCLEAR)
+    if ($c_ct.Checked) {
+        Write-Host ">> ESECUZIONE MASSACRO PROCESSI (CT Style)..." -ForegroundColor Red
+        $svcs = @("DiagTrack", "dmwappushservice", "SysMain", "WbioSrvc", "MapsBroker", "XblAuthManager", "XblGameSave", "XboxNetApiSvc", "Spooler")
+        foreach ($s in $svcs) {
+            Write-Host "   > Terminando parassita: $s" -ForegroundColor DarkGray
+            Stop-Service -Name $s -Force | Out-Null
+            Set-Service -Name $s -StartupType Disabled | Out-Null
+        }
+        # Disabilita Scheduled Tasks che Chris Titus odia
+        Write-Host ">> Disabilitando Task di Manutenzione..." -ForegroundColor Yellow
+        Get-ScheduledTask -TaskName "Consolidator", "ProgramDataUpdater", "Proxy" | Disable-ScheduledTask | Out-Null
+    }
+
+    if ($c_tele.Checked) {
+        Write-Host ">> Eradicazione Telemetria..." -ForegroundColor Yellow
+        reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\DataCollection" /v "AllowTelemetry" /t REG_DWORD /d 0 /f | Out-Null
+    }
+
+    if ($c_deep.Checked) {
+        Write-Host ">> Disabilitando manutenzione automatica..." -ForegroundColor Red
+        reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\Maintenance" /v "MaintenanceDisabled" /t REG_DWORD /d 1 /f | Out-Null
+    }
+
+    # 3. CLEANER
+    if ($c_temp.Checked) {
+        Write-Host ">> Bruciando spazzatura profonda..." -ForegroundColor Yellow
+        $paths = @("$env:TEMP\*", "C:\Windows\Temp\*", "C:\Windows\Prefetch\*")
+        foreach ($p in $paths) {
+            Get-ChildItem $p -Recurse | ForEach-Object {
+                Remove-Item $_.FullName -Force -Recurse | Out-Null
+            }
+        }
+    }
+
+    Write-Host "`n[COMPLETE]: SISTEMA OTTIMIZZATO AL LIVELLO MAESTRO." -ForegroundColor Lime
+    Clear-Host # Pulisce lo schermo anche se ha funzionato
+    [System.Windows.Forms.MessageBox]::Show("Rituale Cyber completato con successo. Riavvia il PC e controlla la fluidità.", "The Maestro Omni-Optimizer")
+})
+
+# --- Avvio dell'applicazione (Nessun Out-Null qui per evitare problemi di visualizzazione) ---
+$form.Controls.Add($btnRun)
+$form.ShowDialog()
