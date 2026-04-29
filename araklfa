@@ -1,30 +1,29 @@
 <# 
 ======================================================================
-      THE MAESTRO - ULTIMATE SUPREMACY V6.0 [GOD MODE]
+      MAESTRO SUPREMACY V6.1 - SYSTEM OVERRIDE ENGINE
 ======================================================================
-     IL SOFTWARE DEFINITIVO PER IL GAMING E LE PERFORMANCE.
-     DESIGNED BY THE MAESTRO. ALL RIGHTS RESERVED.
+     SOLO PER USO PROFESSIONALE. CONTROLLO TOTALE DEL SISTEMA.
 ======================================================================
 #>
 
 Add-Type -AssemblyName System.Windows.Forms, System.Drawing
 $ErrorActionPreference = "SilentlyContinue"
 
-# --- CREAZIONE FINESTRA PRINCIPALE (LAYOUT FISSO) ---
+# --- FINESTRA PRINCIPALE ---
 $form = New-Object System.Windows.Forms.Form
-$form.Text = "MAESTRO SUPREMACY V6.0 - UNSTOPPABLE"
+$form.Text = "SYSTEM OVERRIDE ENGINE"
 $form.Size = New-Object System.Drawing.Size(950, 750)
 $form.BackColor = [System.Drawing.Color]::FromArgb(5, 5, 5)
 $form.StartPosition = "CenterScreen"
-$form.FormBorderStyle = "FixedDialog" # Impedisce di rompere il layout
+$form.FormBorderStyle = "FixedDialog"
 $form.MaximizeBox = $false
 
-# --- FONT PROFESSIONALI ---
+# --- FONT ---
 $fTitle = New-Object System.Drawing.Font("Impact", 32)
 $fHacker = New-Object System.Drawing.Font("Consolas", 10, [System.Drawing.FontStyle]::Bold)
 $fBtn = New-Object System.Drawing.Font("Segoe UI", 14, [System.Drawing.FontStyle]::Bold)
 
-# --- HEADER CYBERPUNK ---
+# --- HEADER ---
 $pnlHead = New-Object System.Windows.Forms.Panel
 $pnlHead.Dock = "Top"; $pnlHead.Height = 100; $pnlHead.BackColor = [System.Drawing.Color]::FromArgb(15, 15, 20)
 $form.Controls.Add($pnlHead)
@@ -34,7 +33,7 @@ $lblTitle.Text = "MAESTRO SUPREMACY"; $lblTitle.Font = $fTitle; $lblTitle.ForeCo
 $lblTitle.TextAlign = "MiddleCenter"; $lblTitle.Dock = "Fill"
 $pnlHead.Controls.Add($lblTitle)
 
-# --- AREA DI LOG (IL TERMINALE INTERNO) ---
+# --- TERMINALE DI LOG ---
 $logBox = New-Object System.Windows.Forms.RichTextBox
 $logBox.Location = New-Object System.Drawing.Point(500, 120)
 $logBox.Size = New-Object System.Drawing.Size(410, 520)
@@ -48,7 +47,7 @@ function Log($m) {
     $logBox.ScrollToCaret()
 }
 
-# --- CONTROLLI PERFORMANCE (ZONA SINISTRA) ---
+# --- PANNELLO CONTROLLI ---
 $pnlCtrl = New-Object System.Windows.Forms.Panel
 $pnlCtrl.Location = New-Object System.Drawing.Point(20, 120); $pnlCtrl.Size = New-Object System.Drawing.Size(460, 520)
 $pnlCtrl.BackColor = [System.Drawing.Color]::FromArgb(10, 10, 10)
@@ -62,65 +61,59 @@ function Add-Check($txt, $y) {
     return $c
 }
 
-$opt1 = Add-Check "SBLOCCA ULTIMATE POWER (No Throttling)" 30
-$opt2 = Add-Check "ERADICA PROCESSI INUTILI (Chris Titus Style)" 80
-$opt3 = Add-Check "KILL TELEMETRY & SPYING (No Errors)" 130
-$opt4 = Add-Check "ZERO LATENCY MOUSE/KEYBOARD" 180
-$opt5 = Add-Check "PULIZIA NUCLEARE CACHE E TEMP" 230
-$opt6 = Add-Check "DISABILITA MANUTENZIONE AUTOMATICA" 280
+# Nomi dei tweak modificati secondo le tue istruzioni
+$opt1 = Add-Check "UNLOCK CORE PERFORMANCE" 30
+$opt2 = Add-Check "DIMEZZA PROCESSI ATTIVI" 80
+$opt3 = Add-Check "BLOCK SYSTEM TRACKING" 130
+$opt4 = Add-Check "OPTIMIZE INPUT LATENCY" 180
+$opt5 = Add-Check "WIPE SYSTEM CACHE" 230
+$opt6 = Add-Check "DISABLE AUTO-MAINTENANCE" 280
 
-# --- TASTO DIVINO (EXECUTE) ---
+# --- TASTO DI ATTIVAZIONE ---
 $btnRun = New-Object System.Windows.Forms.Button
-$btnRun.Text = "INIZIA OTTIMIZZAZIONE"; $btnRun.Font = $fBtn; $btnRun.ForeColor = "Cyan"
+$btnRun.Text = "AVVIA OTTIMIZZAZIONE"; $btnRun.Font = $fBtn; $btnRun.ForeColor = "Cyan"
 $btnRun.BackColor = [System.Drawing.Color]::FromArgb(20, 20, 30); $btnRun.FlatStyle = "Flat"
 $btnRun.FlatAppearance.BorderSize = 2; $btnRun.FlatAppearance.BorderColor = "Cyan"
 $btnRun.Location = New-Object System.Drawing.Point(30, 420); $btnRun.Size = New-Object System.Drawing.Size(400, 80)
 $pnlCtrl.Controls.Add($btnRun)
 
-# --- LOGICA DI ESECUZIONE ---
 $btnRun.Add_Click({
-    Log "AUTENTICAZIONE MAESTRO... OK"
-    Log "AVVIO PROTOCOLLO DI ERADICAZIONE..."
+    Log "INIZIALIZZAZIONE PROTOCOLLO..."
     $btnRun.Enabled = $false
 
     if ($opt1.Checked) {
-        Log "Sblocco Core CPU: Ultimate Performance..."
+        Log "Applicazione Power Scheme..."
         Start-Process cmd -ArgumentList "/c powercfg -duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61 & powercfg -setactive e9a42b02-d5df-448d-aa00-03f14749eb61" -WindowStyle Hidden -Wait
     }
 
     if ($opt2.Checked) {
         $targets = @("SysMain", "DiagTrack", "dmwappushservice", "WbioSrvc", "MapsBroker", "XblAuthManager", "XblGameSave", "XboxNetApiSvc", "Spooler")
         foreach ($t in $targets) {
-            Log "Eradicazione parassita: $t"
+            Log "Terminando processo: $t"
             Start-Process cmd -ArgumentList "/c sc stop $t & sc delete $t" -WindowStyle Hidden -Wait
         }
-        Log "Eliminazione Task programmate..."
         Get-ScheduledTask -TaskName "Consolidator", "ProgramDataUpdater", "Proxy" | Disable-ScheduledTask | Out-Null
     }
 
     if ($opt3.Checked) {
-        Log "Bruciando chiavi di Telemetria..."
+        Log "Cancellazione chiavi di tracciamento..."
         Start-Process cmd -ArgumentList "/c reg add 'HKLM\SOFTWARE\Policies\Microsoft\Windows\DataCollection' /v 'AllowTelemetry' /t REG_DWORD /d 0 /f" -WindowStyle Hidden -Wait
     }
 
     if ($opt4.Checked) {
-        Log "Ottimizzazione IRQ Mouse/Tastiera..."
+        Log "Ricalibrazione latenza hardware..."
         Start-Process cmd -ArgumentList "/c reg add 'HKLM\SYSTEM\CurrentControlSet\Services\mouclass\Parameters' /v 'MouseDataQueueSize' /t REG_DWORD /d 20 /f" -WindowStyle Hidden -Wait
     }
 
     if ($opt5.Checked) {
-        Log "Incenerimento file temporanei..."
+        Log "Eliminazione file spazzatura..."
         Remove-Item "$env:TEMP\*" -Recurse -Force | Out-Null
-        Log "Pulizia completata."
     }
 
-    Log "--------------------------------"
-    Log "SISTEMA PURIFICATO CON SUCCESSO!"
-    Log "RIAVVIA PER SENTIRE LA POTENZA."
+    Log "SISTEMA OTTIMIZZATO."
     $btnRun.Enabled = $true
-    [System.Windows.Forms.MessageBox]::Show("PC Ottimizzato. Benvenuto nel futuro, Mate.", "The Maestro Success")
+    [System.Windows.Forms.MessageBox]::Show("Il tuo PC e' stato ottimizzato con successo.", "Supremacy Engine")
 })
 
-# --- AVVIO ---
-Log "BENVENUTO MATE. SELEZIONA I TWEAK E CLICCA."
+Log "PRONTO PER L'OVERRIDE. SELEZIONA LE OPZIONI."
 $form.ShowDialog() | Out-Null
