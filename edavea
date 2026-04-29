@@ -1,0 +1,130 @@
+Add-Type -AssemblyName System.Windows.Forms, System.Drawing
+$ErrorActionPreference = "SilentlyContinue"
+
+# --- ENGINE DI OTTIMIZZAZIONE ---
+$form = New-Object System.Windows.Forms.Form
+$form.Text = "THE MAESTRO - GLOBAL OVERRIDE V5.0 [ULTIMATE]"
+$form.Size = New-Object System.Drawing.Size(950, 800)
+$form.BackColor = [System.Drawing.Color]::Black
+$form.StartPosition = "CenterScreen"
+$form.FormBorderStyle = "Fixed3D"
+
+# --- FONT ---
+$fTitle = New-Object System.Drawing.Font("Consolas", 26, [System.Drawing.FontStyle]::Bold)
+$fMain = New-Object System.Drawing.Font("Consolas", 11)
+$fLog = New-Object System.Drawing.Font("Consolas", 9)
+
+# --- TITOLO ---
+$title = New-Object System.Windows.Forms.Label
+$title.Text = ">> MAESTRO GLOBAL OVERRIDE <<"
+$title.ForeColor = [System.Drawing.Color]::Lime
+$title.Font = $fTitle
+$title.TextAlign = "MiddleCenter"
+$title.Dock = "Top"
+$title.Height = 80
+$form.Controls.Add($title)
+
+# --- PANNELLO SINISTRO (CONTROLLI) ---
+$pnlLeft = New-Object System.Windows.Forms.Panel
+$pnlLeft.Width = 450
+$pnlLeft.Dock = "Left"
+$pnlLeft.BackColor = [System.Drawing.Color]::FromArgb(15, 15, 15)
+$form.Controls.Add($pnlLeft)
+
+# --- PANNELLO DESTRO (LOG IN DIRETTA) ---
+$pnlRight = New-Object System.Windows.Forms.Panel
+$pnlRight.Dock = "Fill"
+$form.Controls.Add($pnlRight)
+
+$logBox = New-Object System.Windows.Forms.RichTextBox
+$logBox.Dock = "Fill"
+$logBox.BackColor = [System.Drawing.Color]::Black
+$logBox.ForeColor = [System.Drawing.Color]::Lime
+$logBox.Font = $fLog
+$logBox.ReadOnly = $true
+$pnlRight.Controls.Add($logBox)
+
+function Add-Log($msg) { $logBox.AppendText("[$((Get-Date).ToString('HH:mm:ss'))] $msg`n"); $logBox.ScrollToCaret() }
+Add-Log "MAESTRO CORE INIZIALIZZATO. SISTEMA PRONTO ALL'ATTACCO."
+
+# --- OPZIONI (CHECKBOXES) ---
+$y = 20
+function Add-Opt($txt, $top) {
+    $c = New-Object System.Windows.Forms.CheckBox
+    $c.Text = $txt; $c.ForeColor = "White"; $c.Font = $fMain
+    $c.Location = New-Object System.Drawing.Point(30, $top)
+    $c.Size = New-Object System.Drawing.Size(400, 30)
+    $pnlLeft.Controls.Add($c)
+    return $c
+}
+
+$opt1 = Add-Opt "SBLOCCA POTENZA NUCLEO (Ultimate Power)" 50
+$opt2 = Add-Opt "DIMEZZA PROCESSI (Kill Services)" 100
+$opt3 = Add-Opt "ERADICA TELEMETRIA (No Spying)" 150
+$opt4 = Add-Opt "PULIZIA PROFONDA (Cache/Temp)" 200
+$opt5 = Add-Opt "OTTIMIZZAZIONE RAM (Clean Standby)" 250
+$opt6 = Add-Opt "ZERO LATENCY (Mouse/Keyboard)" 300
+
+# --- BOTTONE DI ESECUZIONE ---
+$btnRun = New-Object System.Windows.Forms.Button
+$btnRun.Text = "EXECUTE SYSTEM OVERRIDE"
+$btnRun.Size = New-Object System.Drawing.Size(350, 80)
+$btnRun.Location = New-Object System.Drawing.Point(50, 450)
+$btnRun.FlatStyle = "Flat"
+$btnRun.ForeColor = "Cyan"
+$btnRun.Font = New-Object System.Drawing.Font("Consolas", 14, [System.Drawing.FontStyle]::Bold)
+$btnRun.FlatAppearance.BorderColor = "Cyan"
+$pnlLeft.Controls.Add($btnRun)
+
+$btnRun.Add_Click({
+    Add-Log "AVVIO OVERRIDE... NON SPEGNERE IL PC."
+    $btnRun.Enabled = $false
+    
+    if ($opt1.Checked) {
+        Add-Log "Sblocco Piano Energetico Maestro..."
+        powercfg -duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61 | Out-Null
+        powercfg -setactive e9a42b02-d5df-448d-aa00-03f14749eb61 | Out-Null
+    }
+
+    if ($opt2.Checked) {
+        $svcs = @("SysMain", "DiagTrack", "dmwappushservice", "WbioSrvc", "MapsBroker", "XblAuthManager", "XblGameSave", "XboxNetApiSvc", "Spooler")
+        foreach ($s in $svcs) {
+            Add-Log "Terminando servizio: $s"
+            Stop-Service -Name $s -Force | Out-Null
+            Set-Service -Name $s -StartupType Disabled | Out-Null
+        }
+        Add-Log "Uccidendo Task di manutenzione nascoste..."
+        Get-ScheduledTask -TaskName "Consolidator", "ProgramDataUpdater", "Proxy" | Disable-ScheduledTask | Out-Null
+    }
+
+    if ($opt3.Checked) {
+        Add-Log "Eradicazione Telemetria in corso..."
+        reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\DataCollection" /v "AllowTelemetry" /t REG_DWORD /d 0 /f | Out-Null
+        reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\DataCollection" /v "AllowTelemetry" /t REG_DWORD /d 0 /f | Out-Null
+    }
+
+    if ($opt6.Checked) {
+        Add-Log "Riduzione Latenza Input..."
+        reg add "HKLM\SYSTEM\CurrentControlSet\Services\mouclass\Parameters" /v "MouseDataQueueSize" /t REG_DWORD /d 20 /f | Out-Null
+        reg add "HKLM\SYSTEM\CurrentControlSet\Services\kbdclass\Parameters" /v "KeyboardDataQueueSize" /t REG_DWORD /d 20 /f | Out-Null
+    }
+
+    if ($opt4.Checked) {
+        Add-Log "Incenerimento file temporanei..."
+        Remove-Item "$env:TEMP\*" -Recurse -Force | Out-Null
+    }
+
+    Add-Log "OPERAZIONE COMPLETATA. RIAVVIA ORA."
+    $btnRun.Enabled = $true
+    [System.Windows.Forms.MessageBox]::Show("Sistema Ottimizzato al 100%. Il PC e' ora in modalita' MAESTRO.", "Maestro Override")
+})
+
+# --- CREDITS ---
+$credits = New-Object System.Windows.Forms.Label
+$credits.Text = "MAESTRO TOOL V5 - FOR STRONG USERS ONLY"
+$credits.ForeColor = [System.Drawing.Color]::Gray
+$credits.Dock = "Bottom"
+$credits.TextAlign = "MiddleCenter"
+$form.Controls.Add($credits)
+
+$form.ShowDialog()
