@@ -1,0 +1,170 @@
+<# 
+======================================================================
+     THE MAESTRO OPTIMIZER V1.0 - BY THE MAESTRO
+======================================================================
+Disclaimer: Usare a proprio rischio. Questo script modifica impostazioni di sistema.
+======================================================================
+#>
+
+# --- Pulisce lo schermo e zittisce gli errori ---
+$ErrorActionPreference = "SilentlyContinue"
+Clear-Host
+
+Add-Type -AssemblyName System.Windows.Forms
+Add-Type -AssemblyName System.Drawing
+
+# --- Controllo Amministratore (Obbligatorio) ---
+$currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
+if (-not $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+    [System.Windows.Forms.MessageBox]::Show("ERRORE: Per favore, esegui PowerShell come AMMINISTRATORE! Tasto destro -> Esegui come amministratore.", "The Maestro - Accesso Negato")
+    return
+}
+
+# --- Creazione della Finestra Principale (Aggiustata la dimensione per i nuovi tasti) ---
+$form = New-Object System.Windows.Forms.Form
+$form.Text = "THE MAESTRO OPTIMIZER V1.0"
+$form.Size = New-Object System.Drawing.Size(420,620)
+$form.StartPosition = "CenterScreen"
+$form.BackColor = [System.Drawing.Color]::FromArgb(20, 20, 20) # Sfondo ancora più scuro
+
+# --- HEADER (TITOLO + NOME) ---
+$labelTitle = New-Object System.Windows.Forms.Label
+$labelTitle.Text = "MAESTRO OPTIMIZER"
+$labelTitle.Font = New-Object System.Drawing.Font("Segoe UI", 24, [System.Drawing.FontStyle]::Bold)
+$labelTitle.ForeColor = [System.Drawing.Color]::Cyan
+$labelTitle.Size = New-Object System.Drawing.Size(350, 50)
+$labelTitle.Location = New-Object System.Drawing.Point(35, 20)
+$labelTitle.TextAlign = "MiddleCenter"
+$form.Controls.Add($labelTitle)
+
+$labelBy = New-Object System.Windows.Forms.Label
+$labelBy.Text = "BY THE MAESTRO"
+$labelBy.Font = New-Object System.Drawing.Font("Segoe UI", 10, [System.Drawing.FontStyle]::Italic)
+$labelBy.ForeColor = [System.Drawing.Color]::FromArgb(180, 180, 180) # Grigio chiaro
+$labelBy.Size = New-Object System.Drawing.Size(350, 20)
+$labelBy.Location = New-Object System.Drawing.Point(35, 75)
+$labelBy.TextAlign = "MiddleCenter"
+$form.Controls.Add($labelBy)
+
+# --- LINEA DIVISORIA ---
+$line = New-Object System.Windows.Forms.Label
+$line.BackColor = [System.Drawing.Color]::Cyan
+$line.Size = New-Object System.Drawing.Size(300, 2)
+$line.Location = New-Object System.Drawing.Point(60, 110)
+$form.Controls.Add($line)
+
+# --- CHECKBOXES (Opzioni) ---
+$fontCheck = New-Object System.Drawing.Font("Segoe UI", 13)
+
+$chkFPS = New-Object System.Windows.Forms.CheckBox
+$chkFPS.Text = "Boost FPS (Ultimate Power)"
+$chkFPS.ForeColor = "White"
+$chkFPS.Font = $fontCheck
+$chkFPS.Size = New-Object System.Drawing.Size(320, 30)
+$chkFPS.Location = New-Object System.Drawing.Point(50, 140)
+$chkFPS.Checked = $true # FPS già selezionato di default
+$form.Controls.Add($chkFPS)
+
+$chkLag = New-Object System.Windows.Forms.CheckBox
+$chkLag.Text = "Reduce Input Delay (Mouse/Keyboard)"
+$chkLag.ForeColor = "White"
+$chkLag.Font = $fontCheck
+$chkLag.Size = New-Object System.Drawing.Size(320, 30)
+$chkLag.Location = New-Object System.Drawing.Point(50, 190)
+$chkLag.Checked = $true # Lag già selezionato di default
+$form.Controls.Add($chkLag)
+
+$chkClean = New-Object System.Windows.Forms.CheckBox
+$chkClean.Text = "Clean Temp Files & Cache"
+$chkClean.ForeColor = "White"
+$chkClean.Font = $fontCheck
+$chkClean.Size = New-Object System.Drawing.Size(320, 30)
+$chkClean.Location = New-Object System.Drawing.Point(50, 240)
+$form.Controls.Add($chkClean)
+
+# --- TASTO APPLY (Il tasto magico) ---
+$btnApply = New-Object System.Windows.Forms.Button
+$btnApply.Text = "APPLY SELECTED TWEAKS"
+$btnApply.Size = New-Object System.Drawing.Size(280, 70)
+$btnApply.Location = New-Object System.Drawing.Point(70, 350)
+$btnApply.FlatStyle = "Flat"
+$btnApply.ForeColor = "Black"
+$btnApply.BackColor = [System.Drawing.Color]::Cyan
+$btnApply.Font = New-Object System.Drawing.Font("Segoe UI", 14, [System.Drawing.FontStyle]::Bold)
+$btnApply.Cursor = "Hand"
+
+# --- AZIONE TASTO APPLY ---
+$btnApply.Add_Click({
+    
+    # 1. Messaggio di attesa (perché il backup ci mette un po')
+    [System.Windows.Forms.MessageBox]::Show("Sto creando un Punto di Ripristino e applicando i Tweak. Potrebbe volerci un minuto, non chiudere la finestra!", "The Maestro - Lavoro in corso")
+
+    # 2. PUNTO DI RIPRISTINO AUTOMATICO (Assicurazione)
+    $form.Enabled = $false # Blocca l'app per non far cliccare mentre lavora
+    Enable-ComputerRestore -Drive "C:\"
+    Checkpoint-Computer -Description "TheMaestro_Tweaks_Backup" -RestorePointType "MODIFY_SETTINGS" -ErrorAction SilentlyContinue
+    
+    $actions = 0
+    
+    # 3. Applicazione Tweak
+    if ($chkFPS.Checked) {
+        # Tweak FPS Corazzato
+        powercfg -duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61 | Out-Null
+        powercfg -setactive e9a42b02-d5df-448d-aa00-03f14749eb61 | Out-Null
+        # Se non funziona il piano Ultimate, imposta Prestazioni Elevate standard
+        if (-not (powercfg -getactivescheme).Contains("Ultimate")) {
+            powercfg -setactive 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c | Out-Null
+        }
+        $actions++
+    }
+    
+    if ($chkLag.Checked) {
+        # Tweak Input Delay
+        Set-ItemProperty -Path "HKCU:\Control Panel\Mouse" -Name "MouseSpeed" -Value 0 | Out-Null
+        Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\mouclass\Parameters" -Name "MouseDataQueueSize" -Value 20 | Out-Null
+        $actions++
+    }
+    
+    if ($chkClean.Checked) {
+        # Pulizia Cache e Temp
+        Remove-Item -Path "$env:TEMP\*" -Recurse -Force | Out-Null
+        $actions++
+    }
+    
+    $form.Enabled = $true # Sblocca l'app
+
+    if ($actions -gt 0) {
+        [System.Windows.Forms.MessageBox]::Show("OPERAZIONE COMPLETATA! Riavvia il PC per rendere effettivi i cambiamenti.", "The Maestro")
+        Clear-Host # Pulisce lo schermo anche se ha funzionato
+    } else {
+        [System.Windows.Forms.MessageBox]::Show("Seleziona almeno un'opzione!", "Attenzione")
+    }
+})
+$form.Controls.Add($btnApply)
+
+# --- TASTO RESTORE (Per i clienti pentiti) ---
+$btnRestore = New-Object System.Windows.Forms.Button
+$btnRestore.Text = "RESTORE ORIGINAL"
+$btnRestore.Size = New-Object System.Drawing.Size(200, 40)
+$btnRestore.Location = New-Object System.Drawing.Point(110, 490)
+$btnRestore.FlatStyle = "Flat"
+$btnRestore.ForeColor = "White"
+$btnRestore.BackColor = [System.Drawing.Color]::FromArgb(50, 50, 50)
+$btnRestore.Font = New-Object System.Drawing.Font("Segoe UI", 10)
+$btnRestore.Cursor = "Hand"
+
+# --- AZIONE TASTO RESTORE ---
+$btnRestore.Add_Click({
+    # Ripristina Mouse standard
+    Set-ItemProperty -Path "HKCU:\Control Panel\Mouse" -Name "MouseSpeed" -Value 1 | Out-Null
+    Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\mouclass\Parameters" -Name "MouseDataQueueSize" -Value 100 | Out-Null
+    # Ripristina Piano Energetico Bilanciato
+    powercfg -setactive 381b4222-f694-41f0-9685-ff5bb260df2e | Out-Null
+    
+    [System.Windows.Forms.MessageBox]::Show("Impostazioni originali ripristinate (Mouse e Piano Energetico). Riavvia il PC.", "The Maestro")
+    Clear-Host # Pulizia finale
+})
+$form.Controls.Add($btnRestore)
+
+# --- Avvio dell'applicazione ---
+$form.ShowDialog() | Out-Null
