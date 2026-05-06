@@ -1,103 +1,113 @@
 <# 
 ======================================================================
-      THE MAESTRO OMNI OPTIMIZER [TITUS EDITION V5.0]
+      MAESTRO OMNI-OPTIMIZER: THE TITUS DEFINITIVE 2026
 ======================================================================
 #>
 
-# --- AUTO-ELEVATOR (RE-RUN AS ADMIN) ---
+# --- AUTO-ADMIN ELEVATION ---
 if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
-    $newProcess = New-Object System.Diagnostics.ProcessStartInfo "PowerShell";
-    $newProcess.Arguments = "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"";
-    $newProcess.Verb = "runas";
-    [System.Diagnostics.Process]::Start($newProcess);
+    Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs
     exit
 }
 
 Add-Type -AssemblyName System.Windows.Forms, System.Drawing
 
-# --- SETUP FORM ---
 $form = New-Object System.Windows.Forms.Form
-$form.Text = "MAESTRO OPTIMIZER | CTT LOGIC"
-$form.Size = New-Object System.Drawing.Size(850, 780)
-$form.BackColor = [System.Drawing.Color]::FromArgb(10, 10, 15)
+$form.Text = "MAESTRO OPTIMIZER | FULL TITUS SET"
+$form.Size = New-Object System.Drawing.Size(900, 850)
+$form.BackColor = [System.Drawing.Color]::FromArgb(20, 20, 20)
 $form.ForeColor = [System.Drawing.Color]::White
 $form.StartPosition = "CenterScreen"
 
-# --- TITOLO ---
-$lblTitle = New-Object System.Windows.Forms.Label
-$lblTitle.Text = "SYSTEM TUNING: TITUS MODE"
-$lblTitle.Font = New-Object System.Drawing.Size(24, [System.Drawing.FontStyle]::Bold)
-$lblTitle.ForeColor = [System.Drawing.Color]::FromArgb(0, 255, 200)
-$lblTitle.Size = New-Object System.Drawing.Size(850, 50); $lblTitle.TextAlign = "MiddleCenter"
-$form.Controls.Add($lblTitle)
+# --- TITOLO CLASSICO ---
+$lblHeader = New-Object System.Windows.Forms.Label
+$lblHeader.Text = "WINDOWS OPTIMIZATION PANEL"
+$lblHeader.Font = New-Object System.Drawing.Font("Segoe UI", 18, [System.Drawing.FontStyle]::Bold)
+$lblHeader.TextAlign = "MiddleCenter"; $lblHeader.Size = New-Object System.Drawing.Size(900, 50); $lblHeader.ForeColor = [System.Drawing.Color]::DeepSkyBlue
+$form.Controls.Add($lblHeader)
 
-# --- CONTAINER SCHEDE ---
-$tabControl = New-Object System.Windows.Forms.TabControl
-$tabControl.Location = New-Object System.Drawing.Point(50, 80); $tabControl.Size = New-Object System.Drawing.Size(750, 520)
-$form.Controls.Add($tabControl)
+# --- CONTROLLO SCHEDE ---
+$tabs = New-Object System.Windows.Forms.TabControl
+$tabs.Location = New-Object System.Drawing.Point(30, 70); $tabs.Size = New-Object System.Drawing.Size(820, 600)
+$form.Controls.Add($tabs)
 
-# Tab 1: CTT Essential Tweaks
-$tab1 = New-Object System.Windows.Forms.TabPage; $tab1.Text = "Essential Tweaks"; $tab1.BackColor = [System.Drawing.Color]::FromArgb(20, 20, 25)
-$tabControl.TabPages.Add($tab1)
-
-function Create-Check($text, $y, $parent) {
-    $c = New-Object System.Windows.Forms.CheckBox
-    $c.Text = $text; $c.Location = New-Object System.Drawing.Point(30, $y); $c.Size = New-Object System.Drawing.Size(600, 30)
-    $c.Font = New-Object System.Drawing.Font("Consolas", 10); $c.ForeColor = [System.Drawing.Color]::Lime
-    $parent.Controls.Add($c); return $c
+function Add-TitusPage($name) {
+    $p = New-Object System.Windows.Forms.TabPage; $p.Text = $name; $p.BackColor = [System.Drawing.Color]::FromArgb(40, 40, 40)
+    $tabs.TabPages.Add($p); return $p
 }
 
-$c1_tele = Create-Check "DISABLE TELEMETRY & DATA COLLECTION (CTT Method)" 30 $tab1
-$c1_wifi = Create-Check "DISABLE WIFI SENSE & SHARED UPDATES" 70 $tab1
-$c1_hiber = Create-Check "DISABLE HIBERNATION (Free disk space)" 110 $tab1
-$c1_svc = Create-Check "CLEAN NON-ESSENTIAL SERVICES (SysMain, DiagTrack, etc.)" 150 $tab1
-$c1_dns = Create-Check "FLUSH DNS & RESET IP STACK" 190 $tab1
+$t1 = Add-TitusPage "Essentials"
+$t2 = Add-TitusPage "Gaming/Advanced"
 
-# --- LOGICA DI ESECUZIONE ---
-$btnRun = New-Object System.Windows.Forms.Button
-$btnRun.Text = "INITIATE OPTIMIZATION"
-$btnRun.Size = New-Object System.Drawing.Size(400, 60); $btnRun.Location = New-Object System.Drawing.Point(225, 630)
-$btnRun.FlatStyle = "Flat"; $btnRun.FlatAppearance.BorderColor = "Cyan"; $btnRun.Font = New-Object System.Drawing.Font("Segoe UI", 14, [System.Drawing.FontStyle]::Bold)
-$btnRun.Cursor = "Hand"
+function Add-Chk($txt, $y, $p) {
+    $c = New-Object System.Windows.Forms.CheckBox; $c.Text = $txt; $c.Location = New-Object System.Drawing.Point(30, $y)
+    $c.Size = New-Object System.Drawing.Size(700, 30); $c.Font = New-Object System.Drawing.Font("Consolas", 10)
+    $p.Controls.Add($c); return $c
+}
 
-$btnRun.Add_Click({
-    Write-Host "`n[*] AVVIO PROTOCOLLO CTT..." -ForegroundColor Cyan
+# --- LISTA TWEAK (SET COMPLETO TITUS) ---
+$c_tele = Add-Chk "Disable Telemetry, Tracking & Data Collection" 30 $t1
+$c_hiber = Add-Chk "Disable Hibernation (Delete hiberfil.sys)" 70 $t1
+$c_uac = Add-Chk "Disable UAC (User Account Control)" 110 $t1
+$c_edge = Add-Chk "Disable Edge Background Processes" 150 $t1
+$c_maint = Add-Chk "Disable Automatic Maintenance Tasks" 190 $t1
+$c_storage = Add-Chk "Disable Storage Sense & Temp File Collection" 230 $t1
 
-    # 1. Telemetria (Metodo Chris Titus)
-    if ($c1_tele.Checked) {
-        Write-Host "[+] Rimozione Telemetria..." -ForegroundColor Yellow
+$c_gpuprio = Add-Chk "Force GPU Priority (HAGS + Game Mode Reg)" 30 $t2
+$c_dvr = Add-Chk "Disable GameDVR & Power Throttling" 70 $t2
+$c_net = Add-Chk "Optimize Network (Disable Nagle's & Throttling)" 110 $t2
+$c_ram = Add-Chk "Optimize RAM (Disable Paging Executive)" 150 $t2
+$c_svc = Add-Chk "Kill Bloatware Services (Print, Fax, Maps, Xbox)" 190 $t2
+
+# --- TASTO ESECUZIONE ---
+$btn = New-Object System.Windows.Forms.Button
+$btn.Text = "APPLY ALL TWEAKS"; $btn.Location = New-Object System.Drawing.Point(250, 700)
+$btn.Size = New-Object System.Drawing.Size(400, 60); $btn.BackColor = [System.Drawing.Color]::DeepSkyBlue
+$btn.FlatStyle = "Flat"; $btn.Font = New-Object System.Drawing.Font("Segoe UI", 12, [System.Drawing.FontStyle]::Bold)
+
+$btn.Add_Click({
+    Write-Host "[*] Inizio Ottimizzazione Totale..." -ForegroundColor Cyan
+
+    # 1. TELEMETRIA E PRIVACY
+    if ($c_tele.Checked) {
+        Write-Host "[-] Rimuovendo Telemetria..."
         reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\DataCollection" /v "AllowTelemetry" /t REG_DWORD /d 0 /f | Out-Null
-        Set-Service -Name "DiagTrack" -StartupType Disabled -ErrorAction SilentlyContinue
-        Set-Service -Name "dmwappushservice" -StartupType Disabled -ErrorAction SilentlyContinue
+        reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\DataCollection" /v "AllowTelemetry" /t REG_DWORD /d 0 /f | Out-Null
+        Get-Service "DiagTrack", "dmwappushservice" -ErrorAction SilentlyContinue | Stop-Service -Force | Set-Service -StartupType Disabled
     }
 
-    # 2. Servizi Inutili (CTT Essential List)
-    if ($c1_svc.Checked) {
-        $services = @("SysMain", "WbioSrvc", "WalletService", "MapsBroker", "XblAuthManager")
-        foreach ($s in $services) {
-            if (Get-Service -Name $s -ErrorAction SilentlyContinue) {
-                Write-Host "[+] Fermando servizio: $s" -ForegroundColor Gray
-                Stop-Service -Name $s -Force -ErrorAction SilentlyContinue
-                Set-Service -Name $s -StartupType Disabled -ErrorAction SilentlyContinue
-            }
+    # 2. GAMING & GPU
+    if ($c_gpuprio.Checked) {
+        Write-Host "[-] Ottimizzando GPU..."
+        reg add "HKLM\SYSTEM\CurrentControlSet\Control\GraphicsDrivers" /v "HwSchMode" /t REG_DWORD /d 2 /f | Out-Null
+        reg add "HKLM\SOFTWARE\Microsoft\PolicyManager\default\ApplicationManagement\AllowGameDVR" /v "value" /t REG_DWORD /d 0 /f | Out-Null
+    }
+
+    # 3. RETE (Nagle's Algorithm)
+    if ($c_net.Checked) {
+        Write-Host "[-] Ottimizzando Rete..."
+        reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile" /v "NetworkThrottlingIndex" /t REG_DWORD /d 0xFFFFFFFF /f | Out-Null
+        reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile" /v "SystemResponsiveness" /t REG_DWORD /d 0 /f | Out-Null
+    }
+
+    # 4. RAM & KERNEL
+    if ($c_ram.Checked) {
+        reg add "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management" /v "DisablePagingExecutive" /t REG_DWORD /d 1 /f | Out-Null
+    }
+
+    # 5. SERVIZI (Il "massacro" di Titus)
+    if ($c_svc.Checked) {
+        $svcs = @("Spooler", "Fax", "MapsBroker", "XblAuthManager", "XblGameSave", "XboxNetApiSvc")
+        foreach ($s in $svcs) {
+            Get-Service $s -ErrorAction SilentlyContinue | Stop-Service -Force | Set-Service -StartupType Disabled
         }
     }
 
-    # 3. Ibernazione
-    if ($c1_hiber.Checked) {
-        Write-Host "[+] Disabilitazione Ibernazione..." -ForegroundColor Green
-        powercfg -h off
-    }
+    # 6. IBERNAZIONE
+    if ($c_hiber.Checked) { powercfg -h off }
 
-    # 4. DNS Flush
-    if ($c1_dns.Checked) {
-        Write-Host "[+] Pulizia DNS..." -ForegroundColor White
-        ipconfig /flushdns | Out-Null
-        netsh int ip reset | Out-Null
-    }
-
-    [System.Windows.Forms.MessageBox]::Show("Ottimizzazione Titus completata. Riavvia per i migliori risultati!", "Maestro Optimizer")
+    [System.Windows.Forms.MessageBox]::Show("Rituale completato! Riavvia il PC, Mate.", "Maestro Optimizer")
 })
 
-$form.Controls.Add($btnRun)
+$form.Controls.Add($btn)
 $form.ShowDialog()
