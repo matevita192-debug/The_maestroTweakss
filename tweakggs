@@ -1,0 +1,103 @@
+<# 
+======================================================================
+      THE MAESTRO OMNI OPTIMIZER [TITUS EDITION V5.0]
+======================================================================
+#>
+
+# --- AUTO-ELEVATOR (RE-RUN AS ADMIN) ---
+if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
+    $newProcess = New-Object System.Diagnostics.ProcessStartInfo "PowerShell";
+    $newProcess.Arguments = "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"";
+    $newProcess.Verb = "runas";
+    [System.Diagnostics.Process]::Start($newProcess);
+    exit
+}
+
+Add-Type -AssemblyName System.Windows.Forms, System.Drawing
+
+# --- SETUP FORM ---
+$form = New-Object System.Windows.Forms.Form
+$form.Text = "MAESTRO OPTIMIZER | CTT LOGIC"
+$form.Size = New-Object System.Drawing.Size(850, 780)
+$form.BackColor = [System.Drawing.Color]::FromArgb(10, 10, 15)
+$form.ForeColor = [System.Drawing.Color]::White
+$form.StartPosition = "CenterScreen"
+
+# --- TITOLO ---
+$lblTitle = New-Object System.Windows.Forms.Label
+$lblTitle.Text = "SYSTEM TUNING: TITUS MODE"
+$lblTitle.Font = New-Object System.Drawing.Size(24, [System.Drawing.FontStyle]::Bold)
+$lblTitle.ForeColor = [System.Drawing.Color]::FromArgb(0, 255, 200)
+$lblTitle.Size = New-Object System.Drawing.Size(850, 50); $lblTitle.TextAlign = "MiddleCenter"
+$form.Controls.Add($lblTitle)
+
+# --- CONTAINER SCHEDE ---
+$tabControl = New-Object System.Windows.Forms.TabControl
+$tabControl.Location = New-Object System.Drawing.Point(50, 80); $tabControl.Size = New-Object System.Drawing.Size(750, 520)
+$form.Controls.Add($tabControl)
+
+# Tab 1: CTT Essential Tweaks
+$tab1 = New-Object System.Windows.Forms.TabPage; $tab1.Text = "Essential Tweaks"; $tab1.BackColor = [System.Drawing.Color]::FromArgb(20, 20, 25)
+$tabControl.TabPages.Add($tab1)
+
+function Create-Check($text, $y, $parent) {
+    $c = New-Object System.Windows.Forms.CheckBox
+    $c.Text = $text; $c.Location = New-Object System.Drawing.Point(30, $y); $c.Size = New-Object System.Drawing.Size(600, 30)
+    $c.Font = New-Object System.Drawing.Font("Consolas", 10); $c.ForeColor = [System.Drawing.Color]::Lime
+    $parent.Controls.Add($c); return $c
+}
+
+$c1_tele = Create-Check "DISABLE TELEMETRY & DATA COLLECTION (CTT Method)" 30 $tab1
+$c1_wifi = Create-Check "DISABLE WIFI SENSE & SHARED UPDATES" 70 $tab1
+$c1_hiber = Create-Check "DISABLE HIBERNATION (Free disk space)" 110 $tab1
+$c1_svc = Create-Check "CLEAN NON-ESSENTIAL SERVICES (SysMain, DiagTrack, etc.)" 150 $tab1
+$c1_dns = Create-Check "FLUSH DNS & RESET IP STACK" 190 $tab1
+
+# --- LOGICA DI ESECUZIONE ---
+$btnRun = New-Object System.Windows.Forms.Button
+$btnRun.Text = "INITIATE OPTIMIZATION"
+$btnRun.Size = New-Object System.Drawing.Size(400, 60); $btnRun.Location = New-Object System.Drawing.Point(225, 630)
+$btnRun.FlatStyle = "Flat"; $btnRun.FlatAppearance.BorderColor = "Cyan"; $btnRun.Font = New-Object System.Drawing.Font("Segoe UI", 14, [System.Drawing.FontStyle]::Bold)
+$btnRun.Cursor = "Hand"
+
+$btnRun.Add_Click({
+    Write-Host "`n[*] AVVIO PROTOCOLLO CTT..." -ForegroundColor Cyan
+
+    # 1. Telemetria (Metodo Chris Titus)
+    if ($c1_tele.Checked) {
+        Write-Host "[+] Rimozione Telemetria..." -ForegroundColor Yellow
+        reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\DataCollection" /v "AllowTelemetry" /t REG_DWORD /d 0 /f | Out-Null
+        Set-Service -Name "DiagTrack" -StartupType Disabled -ErrorAction SilentlyContinue
+        Set-Service -Name "dmwappushservice" -StartupType Disabled -ErrorAction SilentlyContinue
+    }
+
+    # 2. Servizi Inutili (CTT Essential List)
+    if ($c1_svc.Checked) {
+        $services = @("SysMain", "WbioSrvc", "WalletService", "MapsBroker", "XblAuthManager")
+        foreach ($s in $services) {
+            if (Get-Service -Name $s -ErrorAction SilentlyContinue) {
+                Write-Host "[+] Fermando servizio: $s" -ForegroundColor Gray
+                Stop-Service -Name $s -Force -ErrorAction SilentlyContinue
+                Set-Service -Name $s -StartupType Disabled -ErrorAction SilentlyContinue
+            }
+        }
+    }
+
+    # 3. Ibernazione
+    if ($c1_hiber.Checked) {
+        Write-Host "[+] Disabilitazione Ibernazione..." -ForegroundColor Green
+        powercfg -h off
+    }
+
+    # 4. DNS Flush
+    if ($c1_dns.Checked) {
+        Write-Host "[+] Pulizia DNS..." -ForegroundColor White
+        ipconfig /flushdns | Out-Null
+        netsh int ip reset | Out-Null
+    }
+
+    [System.Windows.Forms.MessageBox]::Show("Ottimizzazione Titus completata. Riavvia per i migliori risultati!", "Maestro Optimizer")
+})
+
+$form.Controls.Add($btnRun)
+$form.ShowDialog()
